@@ -19,7 +19,10 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
     int armpos = 0;
     int targetpos = 0;
 
-    boolean isopen = true;
+    boolean is_open_claw = true;
+
+    boolean is_open_intake = false;
+    float timer_intake = 0;
 
     @Override
     public void runOpMode() {
@@ -49,7 +52,10 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
 
             telemetry.addData("Arm-pos", arm.getCurrentPosition());
             telemetry.addData("Wrist-pos", wrist.getCurrentPosition());
-            telemetry.addData("is-open", isopen);
+            telemetry.addData("is-open_claw", is_open_claw);
+            telemetry.addData("is-open_intake", is_open_intake);
+            telemetry.addData("timer_intake", timer_intake);
+
 
             telemetry.update();
 
@@ -67,30 +73,50 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
             }
 
             if (gamepad2.square) {
-                if (isopen){
+                if (is_open_claw){
                     claw.setPosition(0.525);
-                    isopen = false;
+                    is_open_claw = false;
                 }
             }else if(gamepad2.cross) {
-                if (!isopen){
+                if (!is_open_claw){
                     claw.setPosition(0.4);
-                    isopen = true;
+                    is_open_claw = true;
                 }
             }
 
             if (gamepad2.triangle) {
-                intake.setPosition(1);
-            } else if (gamepad2.circle) {
-                intake.setPosition(0);
-            }else{
-                intake.setPosition(0);
+                //if (timer_intake <= 0) {
+                //    if (is_open_intake) {
+                //        intake.setPosition(1);
+                //        is_open_intake = false;
+                //        timer_intake = 2.5F;
+                //    } else {
+                //        intake.setPosition(0);
+                //        is_open_intake = true;
+                //        timer_intake = 2.5F;
+                //    }
+                //}
+            //}
+                if (is_open_intake) {
+                    intake.setPosition(1);
+                    is_open_intake = false;
+                }
+            } else if(gamepad2.circle) {
+                if (!is_open_intake) {
+                    intake.setPosition(0);
+                    is_open_intake = true;
+                }
             }
+
+            //if (timer_intake > 0) {
+            //    timer_intake -= 0.01F;
+            //}
 
             if (gamepad2.left_bumper) {
                 arm.setPower(0.6);
                 targetpos = 0;
             } else if (gamepad2.left_trigger != 0) {
-                if (armpos > 200) {
+                if (armpos > 150) {
                     arm.setPower(-0.6);
                 }
                 targetpos = 0;
@@ -109,14 +135,15 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
 
 
             if (gamepad2.dpad_left) {
-                wrist.setPower(-0.6);
-            } else if (gamepad2.dpad_right) {
                 wrist.setPower(0.6);
+            } else if (gamepad2.dpad_right) {
+                wrist.setPower(-0.6);
             } else {
                 wrist.setPower(0);
             }
 
             //if (gamepad2.start) {
+
             //}
 
         }
