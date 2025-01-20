@@ -39,12 +39,27 @@ public class auto extends LinearOpMode {
 
     private void park(boolean left_p) {
         // hier aanpassen
-        move_x(left_p, 1, 100);
-        move_z(1, 100);
-        move_x(left_p, 1, 100);
+        move_z(-1, 100);
+        sleep(200);
+        move_x(left_p, -1, 250);
+        sleep(500);
+        move_z(-1, 500);
     }
 
-    boolean isopen = true;
+    private void arm(int pos_arm, int pos_wrist) {
+        if (pos_arm < arm.getCurrentPosition()) {
+            arm.setPower(-0.4);
+        } else {
+            arm.setPower(0.4);
+        }
+        if (pos_wrist < wrist.getCurrentPosition()) {
+            wrist.setPower(-0.4);
+        } else {
+            wrist.setPower(0.4);
+        }
+    }
+
+    boolean is_open = true;
 
     @Override
     public void runOpMode() {
@@ -66,6 +81,12 @@ public class auto extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        //arm(2000, 24); //2300
+        //sleep(1000);
+        //move_z(-1, 200);
+        //claw.setPosition(0.4);
+        park(false);
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Waiting for input");
@@ -74,7 +95,7 @@ public class auto extends LinearOpMode {
 
             telemetry.addData("Arm-pos", arm.getCurrentPosition());
             telemetry.addData("Wrist-pos", wrist.getCurrentPosition());
-            telemetry.addData("is-open", isopen);
+            telemetry.addData("is-open", is_open);
 
             telemetry.update();
 

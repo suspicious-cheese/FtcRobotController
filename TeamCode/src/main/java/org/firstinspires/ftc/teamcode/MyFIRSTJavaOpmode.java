@@ -74,7 +74,7 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
 
             if (gamepad2.square) {
                 if (is_open_claw){
-                    claw.setPosition(0.525);
+                    claw.setPosition(0.515);
                     is_open_claw = false;
                 }
             }else if(gamepad2.cross) {
@@ -98,6 +98,7 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
                 //}
             //}
                 if (is_open_intake) {
+                    gamepad1.rumble(500);
                     intake.setPosition(1);
                     is_open_intake = false;
                 }
@@ -112,11 +113,11 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
             //    timer_intake -= 0.01F;
             //}
 
-            if (gamepad2.left_bumper) {
+            if (gamepad2.dpad_up) {
                 arm.setPower(0.6);
                 targetpos = 0;
-            } else if (gamepad2.left_trigger != 0) {
-                if (armpos > 150) {
+            } else if (gamepad2.dpad_down) {
+                if (armpos > 200) {
                     arm.setPower(-0.6);
                 }
                 targetpos = 0;
@@ -142,9 +143,6 @@ public class MyFIRSTJavaOpmode extends LinearOpMode {
                 wrist.setPower(0);
             }
 
-            //if (gamepad2.start) {
-
-            //}
 
         }
 
