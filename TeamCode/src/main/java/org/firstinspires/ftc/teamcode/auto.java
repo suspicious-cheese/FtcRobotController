@@ -39,7 +39,7 @@ public class auto extends LinearOpMode {
 
     private void park(boolean left_p) {
         // hier aanpassen
-        move_z(-1, 100);
+        move_z(-1, 100 );
         sleep(200);
         move_x(left_p, -1, 250);
         sleep(500);
