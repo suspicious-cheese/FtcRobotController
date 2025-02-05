@@ -16,12 +16,12 @@ public class Mecanum extends LinearOpMode {
     private DcMotor rightFrontDrive;
     private DcMotor leftBackDrive;
     private DcMotor rightBackDrive;
-
     int armpos = 0;
     int targetpos = 0;
-
     boolean is_open_claw = true;
     boolean is_open_intake = false;
+    float timer_intake = 0;
+
 
     @Override
     public void runOpMode() {
@@ -48,28 +48,35 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            //  Read joystick inputs
-            double drive = -gamepad1.left_stick_y;  // Forward/Backward
-            double strafe = gamepad1.left_stick_x;  // Left/Right
-            double rotate = gamepad1.right_stick_x; // Rotation
+            telemetry.addData("Status", "Waiting for input");
+            telemetry.addData("ly", gamepad1.left_stick_y);
+            telemetry.addData("rx", gamepad1.right_stick_x);
 
-            //  Mecanum drive calculations
-            double frontLeftPower = drive + strafe + rotate;
-            double frontRightPower = drive - strafe - rotate;
-            double backLeftPower = drive - strafe + rotate;
-            double backRightPower = drive + strafe - rotate;
+            telemetry.addData("Arm-pos", arm.getCurrentPosition());
+            telemetry.addData("Wrist-pos", wrist.getCurrentPosition());
+            telemetry.addData("is-open_claw", is_open_claw);
+            telemetry.addData("is-open_intake", is_open_intake);
+            telemetry.addData("timer_intake", timer_intake);
 
-            //  Normalize values if any exceed 1.0
-            double maxPower = Math.max(1.0, Math.max(
-                    Math.abs(frontLeftPower),
-                    Math.max(Math.abs(frontRightPower),
-                            Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)))
-            ));
 
-            leftFrontDrive.setPower(frontLeftPower / maxPower);
-            rightFrontDrive.setPower(frontRightPower / maxPower);
-            leftBackDrive.setPower(backLeftPower / maxPower);
-            rightBackDrive.setPower(backRightPower / maxPower);
+            telemetry.update();
+
+            armpos = arm.getCurrentPosition();
+
+            if (gamepad1.left_stick_y != 0) {
+                leftBackDrive.setPower(gamepad1.left_stick_y);
+                rightBackDrive.setPower(gamepad1.left_stick_y);
+            } else if (gamepad1.right_stick_x != 0) {
+                leftBackDrive.setPower(-gamepad1.right_stick_x);
+                rightBackDrive.setPower(gamepad1.right_stick_x);
+                leftFrontDrive.setPower(-gamepad1.right_stick_x);
+                rightFrontDrive.setPower(gamepad1.right_stick_x);
+            } else {
+                leftBackDrive.setPower(0);
+                rightBackDrive.setPower(0);
+                leftFrontDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+            }
 
             if (gamepad2.square) {
                 if (is_open_claw){
@@ -84,18 +91,6 @@ public class Mecanum extends LinearOpMode {
             }
 
             if (gamepad2.triangle) {
-                //if (timer_intake <= 0) {
-                //    if (is_open_intake) {
-                //        intake.setPosition(1);
-                //        is_open_intake = false;
-                //        timer_intake = 2.5F;
-                //    } else {
-                //        intake.setPosition(0);
-                //        is_open_intake = true;
-                //        timer_intake = 2.5F;
-                //    }
-                //}
-            //}
                 if (is_open_intake) {
                     gamepad1.rumble(500);
                     intake.setPosition(1);
