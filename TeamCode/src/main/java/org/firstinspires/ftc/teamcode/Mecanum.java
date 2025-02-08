@@ -65,49 +65,99 @@ public class Mecanum extends LinearOpMode {
             armpos = arm.getCurrentPosition();
 
 
-            double x = gamepad1.left_stick_x;
-            double y = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
+            //double x = gamepad1.left_stick_x;
+            //double y = -gamepad1.left_stick_y;
+            //double turn = gamepad1.right_stick_x;
 
-            double theta = Math.atan2(y, x);
-            double power = Math.hypot(x, y);
+            //double theta = Math.atan2(y, x);
+            //double power = Math.hypot(x, y);
 
-            double sin = Math.sin(theta - Math.PI/4);
-            double cos = Math.cos(theta - Math.PI/4);
+            //double sin = Math.sin(theta - Math.PI/4);
+            //double cos = Math.cos(theta - Math.PI/4);
 
-            double leftFront = power * cos;
-            double rightFront = power * sin;
-            double leftBack = power * sin;
-            double rightBack = power * cos;
+            //double leftFront = power * cos;
+            //double rightFront = power * sin;
+            //double leftBack = power * sin;
+            //double rightBack = power * cos;
 
-            if ((power + Math.abs(turn)) > 1) {
-                leftFront /= power + turn;
-                leftBack /= power + turn;
-                rightFront /= power + turn;
-                rightBack /= power + turn;
+            //if ((power + Math.abs(turn)) > 1) {
+            //    leftFront /= power + turn;
+            //    leftBack /= power + turn;
+            //    rightFront /= power + turn;
+            //    rightBack /= power + turn;
+            //}
+
+
+            //leftFrontDrive.setPower(leftFront);
+            //leftBackDrive.setPower(leftFront);
+            //rightFrontDrive.setPower(leftFront);
+            //rightBackDrive.setPower(leftFront);
+
+
+            if (gamepad1.left_stick_y < -0.5) {
+                if (gamepad1.left_stick_x < -0.5) {
+                    leftFrontDrive.setPower(0);
+                    rightFrontDrive.setPower(gamepad1.left_stick_y);
+                    leftBackDrive.setPower(0);
+                    rightBackDrive.setPower(gamepad1.left_stick_y);
+                }else if(-0.5 < gamepad1.left_stick_x || gamepad1.left_stick_x < 0.5) {
+                    leftFrontDrive.setPower(gamepad1.left_stick_y);
+                    rightFrontDrive.setPower(gamepad1.left_stick_y);
+                    leftBackDrive.setPower(gamepad1.left_stick_y);
+                    rightBackDrive.setPower(gamepad1.left_stick_y);
+                }else{
+                    leftFrontDrive.setPower(gamepad1.left_stick_y);
+                    rightFrontDrive.setPower(0);
+                    leftBackDrive.setPower(gamepad1.left_stick_y);
+                    rightBackDrive.setPower(0);
+                }
+            } else if (-0.5 < gamepad1.left_stick_y || gamepad1.left_stick_y < 0.5) {
+                if (gamepad1.left_stick_x < -0.5) {
+                    leftFrontDrive.setPower(-gamepad1.left_stick_x);
+                    rightFrontDrive.setPower(gamepad1.left_stick_x);
+                    leftBackDrive.setPower(gamepad1.left_stick_x);
+                    rightBackDrive.setPower(-gamepad1.left_stick_x);
+                }else if(-0.5 < gamepad1.left_stick_x || gamepad1.left_stick_x < 0.5) {
+                    leftFrontDrive.setPower(0);
+                    rightFrontDrive.setPower(0);
+                    leftBackDrive.setPower(0);
+                    rightBackDrive.setPower(0);
+                }else{
+                    leftFrontDrive.setPower(gamepad1.left_stick_x);
+                    rightFrontDrive.setPower(-gamepad1.left_stick_x);
+                    leftBackDrive.setPower(-gamepad1.left_stick_x);
+                    rightBackDrive.setPower(gamepad1.left_stick_x);
+                }
+            } else {
+                if (gamepad1.left_stick_x < -0.5) {
+                    leftFrontDrive.setPower(0);
+                    rightFrontDrive.setPower(-gamepad1.left_stick_y);
+                    leftBackDrive.setPower(0);
+                    rightBackDrive.setPower(-gamepad1.left_stick_y);
+                }else if(-0.5 < gamepad1.left_stick_x || gamepad1.left_stick_x < 0.5) {
+                    leftFrontDrive.setPower(-gamepad1.left_stick_y);
+                    rightFrontDrive.setPower(-gamepad1.left_stick_y);
+                    leftBackDrive.setPower(-gamepad1.left_stick_y);
+                    rightBackDrive.setPower(-gamepad1.left_stick_y);
+                }else{
+                    leftFrontDrive.setPower(-gamepad1.left_stick_y);
+                    rightFrontDrive.setPower(0);
+                    leftBackDrive.setPower(-gamepad1.left_stick_y);
+                    rightBackDrive.setPower(0);
+                }
             }
 
-
-            leftFrontDrive.setPower(leftFront);
-            leftBackDrive.setPower(leftFront);
-            rightFrontDrive.setPower(leftFront);
-            rightBackDrive.setPower(leftFront);
-
-
-            //if (gamepad1.left_stick_y < -0.5) {
-            //    if (gamepad1.left_stick_x < -0.5) {
-            //        rightFrontDrive.setPower(gamepad1.left_stick_y);
-            //        leftBackDrive.setPower(gamepad1.left_stick_y);
-            //    }else if(-0.5 < gamepad1.left_stick_x || gamepad1.left_stick_x < 0.5) {
-            //        leftFrontDrive.setPower(gamepad1.left_stick_y);
-            //        rightFrontDrive.setPower(gamepad1.left_stick_y);
-            //        leftBackDrive.setPower(gamepad1.left_stick_y);
-            //        rightBackDrive.setPower(gamepad1.left_stick_y);
-            //    }else{
-            //        leftFrontDrive.setPower(gamepad1.left_stick_y);
-            //        leftBackDrive.setPower(gamepad1.left_stick_y);
-            //    }
-            //}
+            if (gamepad1.right_stick_x < -0.5) {
+                leftFrontDrive.setPower(-gamepad1.right_stick_x);
+                rightFrontDrive.setPower(gamepad1.right_stick_x);
+                leftBackDrive.setPower(-gamepad1.right_stick_x);
+                rightBackDrive.setPower(gamepad1.right_stick_x);
+            } else {
+                leftFrontDrive.setPower(gamepad1.right_stick_x);
+                rightFrontDrive.setPower(-gamepad1.right_stick_x);
+                leftBackDrive.setPower(gamepad1.right_stick_x);
+                rightBackDrive.setPower(-gamepad1.right_stick_x);
+            }
 
             if (gamepad2.square) {
                 if (is_open_claw){
