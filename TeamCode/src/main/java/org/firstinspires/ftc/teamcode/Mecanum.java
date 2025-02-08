@@ -87,6 +87,7 @@ public class Mecanum extends LinearOpMode {
                 rightBack /= power + turn;
             }
 
+
             leftFrontDrive.setPower(leftFront);
             leftBackDrive.setPower(leftFront);
             rightFrontDrive.setPower(leftFront);
