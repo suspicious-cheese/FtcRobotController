@@ -22,7 +22,6 @@ public class Mecanum extends LinearOpMode {
     boolean is_open_intake = false;
     float timer_intake = 0;
 
-
     @Override
     public void runOpMode() {
         leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
@@ -59,54 +58,39 @@ public class Mecanum extends LinearOpMode {
             telemetry.addData("is-open_intake", is_open_intake);
             telemetry.addData("timer_intake", timer_intake);
 
-
             telemetry.update();
 
             armpos = arm.getCurrentPosition();
 
+            if (gamepad1.left_trigger < 0.5) {
+                double x = gamepad1.left_stick_x;
+                double y = -gamepad1.left_stick_y;
+                double turn = gamepad1.right_stick_x;
 
-            double x = gamepad1.left_stick_x;
-            double y = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
+                double theta = Math.atan2(y, x);
+                double power = Math.hypot(x, y);
 
-            double theta = Math.atan2(y, x);
-            double power = Math.hypot(x, y);
+                double sin = Math.sin(theta - Math.PI / 4);
+                double cos = Math.cos(theta - Math.PI / 4);
 
-            double sin = Math.sin(theta - Math.PI/4);
-            double cos = Math.cos(theta - Math.PI/4);
+                double leftFront = power * cos + turn;
+                double rightFront = power * sin - turn;
+                double leftBack = power * sin + turn;
+                double rightBack = power * cos - turn;
 
-            double leftFront = power * cos;
-            double rightFront = power * sin;
-            double leftBack = power * sin;
-            double rightBack = power * cos;
+                if ((power + Math.abs(turn)) > 1) {
+                    leftFront /= power + turn;
+                    leftBack /= power + turn;
+                    rightFront /= power + turn;
+                    rightBack /= power + turn;
+                }
 
-            if ((power + Math.abs(turn)) > 1) {
-                leftFront /= power + turn;
-                leftBack /= power + turn;
-                rightFront /= power + turn;
-                rightBack /= power + turn;
-            }
+                leftFrontDrive.setPower(leftFront);
+                leftBackDrive.setPower(leftBack);
+                rightFrontDrive.setPower(rightFront);
+                rightBackDrive.setPower(rightBack);
+            } // else { }
 
-            leftFrontDrive.setPower(leftFront);
-            leftBackDrive.setPower(leftFront);
-            rightFrontDrive.setPower(leftFront);
-            rightBackDrive.setPower(leftFront);
-
-
-            //if (gamepad1.left_stick_y < -0.5) {
-            //    if (gamepad1.left_stick_x < -0.5) {
-            //        rightFrontDrive.setPower(gamepad1.left_stick_y);
-            //        leftBackDrive.setPower(gamepad1.left_stick_y);
-            //    }else if(-0.5 < gamepad1.left_stick_x || gamepad1.left_stick_x < 0.5) {
-            //        leftFrontDrive.setPower(gamepad1.left_stick_y);
-            //        rightFrontDrive.setPower(gamepad1.left_stick_y);
-            //        leftBackDrive.setPower(gamepad1.left_stick_y);
-            //        rightBackDrive.setPower(gamepad1.left_stick_y);
-            //    }else{
-            //        leftFrontDrive.setPower(gamepad1.left_stick_y);
-            //        leftBackDrive.setPower(gamepad1.left_stick_y);
-            //    }
-            //}
 
             if (gamepad2.square) {
                 if (is_open_claw){
