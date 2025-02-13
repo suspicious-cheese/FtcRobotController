@@ -89,7 +89,35 @@ public class Mecanum extends LinearOpMode {
                 leftBackDrive.setPower(leftBack);
                 rightFrontDrive.setPower(rightFront);
                 rightBackDrive.setPower(rightBack);
-            } // else { }
+
+            } else if (gamepad1.left_trigger > 0.5) {
+                double x = gamepad1.left_stick_x;
+                double y = -gamepad1.left_stick_y;
+                double turn = gamepad1.right_stick_x;
+
+                double theta = Math.atan2(y, x);
+                double power = Math.hypot(x, y);
+
+                double sin = Math.sin(theta - Math.PI / 4);
+                double cos = Math.cos(theta - Math.PI / 4);
+
+                double leftFront = power * cos + turn;
+                double rightFront = power * sin - turn;
+                double leftBack = power * sin + turn;
+                double rightBack = power * cos - turn;
+
+                if ((power + Math.abs(turn)) > 1) {
+                    leftFront /= power + turn;
+                    leftBack /= power + turn;
+                    rightFront /= power + turn;
+                    rightBack /= power + turn;
+                }
+
+                leftFrontDrive.setPower(leftFront * 0.25);
+                leftBackDrive.setPower(leftBack * 0.25);
+                rightFrontDrive.setPower(rightFront * 0.25);
+                rightBackDrive.setPower(rightBack * 0.25);
+            }
 
 
             if (gamepad2.square) {
