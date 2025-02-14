@@ -14,9 +14,9 @@ public class ArmController {
     private final DcMotor motor;
 
     // Conversion: normalized [0.0,1.0] to encoder ticks.
-    private final int MAX_TICKS = 1000; // Adjust this value to your arm's encoder range.
+    private final int MAX_TICKS = 2800; // Adjust this value to your arm's encoder range.
     // Motor power used during moves.
-    private final float MOVE_POWER = 0.5f;
+    private final float MOVE_POWER = 0.6f;
 
     // Idle oscillation parameters.
     // idleAmplitude is in encoder ticks.

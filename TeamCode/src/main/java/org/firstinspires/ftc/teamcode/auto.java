@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.ArmController;
 
 @Autonomous
 public class auto extends LinearOpMode {
@@ -131,26 +132,12 @@ public class auto extends LinearOpMode {
             // Start the arm movement in a separate thread
             Thread armThread = new Thread(() -> {
                 while (true){
-                    armpos = arm.getCurrentPosition();
 
-                    if (targetpos == 0) {
-                        targetpos = armpos;
-                    }
-                    if (targetpos + 15 < armpos) {
-                        arm.setPower(-0.1);
-                    } else if (targetpos - 15 > armpos) {
-                        arm.setPower(0.1);
-                    } else {
-                        arm.setPower(0);
-                    }
                 }
             });
 
             armThread.start();
 
-            arm(1);
-            sleep(2000);
-            arm(0);
             move_y(1000, 1);
             sleep(1000);
             move_right(1000);

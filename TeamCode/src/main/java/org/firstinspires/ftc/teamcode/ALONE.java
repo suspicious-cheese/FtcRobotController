@@ -12,8 +12,10 @@ public class ALONE extends LinearOpMode {
     private DcMotor arm;
     private Servo claw;
     private Servo intake;
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
+    private DcMotor leftFrontDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightBackDrive;
     private DcMotor wrist;
 
     int armpos = 0;
@@ -26,8 +28,10 @@ public class ALONE extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");  // FIXED
+        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive"); // FIXED
         arm = hardwareMap.get(DcMotor.class, "arm");
         intake = hardwareMap.get(Servo.class, "intake");
         claw = hardwareMap.get(Servo.class, "claw");
@@ -36,8 +40,10 @@ public class ALONE extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -61,15 +67,61 @@ public class ALONE extends LinearOpMode {
 
             armpos = arm.getCurrentPosition();
 
-            if (gamepad1.left_stick_y != 0) {
-                leftDrive.setPower(gamepad1.left_stick_y);
-                rightDrive.setPower(gamepad1.left_stick_y);
-            } else if (gamepad1.right_stick_x != 0) {
-                leftDrive.setPower(-gamepad1.right_stick_x);
-                rightDrive.setPower(gamepad1.right_stick_x);
-            } else {
-                leftDrive.setPower(0);
-                rightDrive.setPower(0);
+            if (gamepad1.left_trigger < 0.5) {
+                double x = gamepad1.left_stick_x;
+                double y = -gamepad1.left_stick_y;
+                double turn = gamepad1.right_stick_x;
+
+                double theta = Math.atan2(y, x);
+                double power = Math.hypot(x, y);
+
+                double sin = Math.sin(theta - Math.PI / 4);
+                double cos = Math.cos(theta - Math.PI / 4);
+
+                double leftFront = power * cos + turn;
+                double rightFront = power * sin - turn;
+                double leftBack = power * sin + turn;
+                double rightBack = power * cos - turn;
+
+                if ((power + Math.abs(turn)) > 1) {
+                    leftFront /= power + turn;
+                    leftBack /= power + turn;
+                    rightFront /= power + turn;
+                    rightBack /= power + turn;
+                }
+
+                leftFrontDrive.setPower(leftFront);
+                leftBackDrive.setPower(leftBack);
+                rightFrontDrive.setPower(rightFront);
+                rightBackDrive.setPower(rightBack);
+
+            } else if (gamepad1.left_trigger > 0.5) {
+                double x = gamepad1.left_stick_x;
+                double y = -gamepad1.left_stick_y;
+                double turn = gamepad1.right_stick_x;
+
+                double theta = Math.atan2(y, x);
+                double power = Math.hypot(x, y);
+
+                double sin = Math.sin(theta - Math.PI / 4);
+                double cos = Math.cos(theta - Math.PI / 4);
+
+                double leftFront = power * cos + turn;
+                double rightFront = power * sin - turn;
+                double leftBack = power * sin + turn;
+                double rightBack = power * cos - turn;
+
+                if ((power + Math.abs(turn)) > 1) {
+                    leftFront /= power + turn;
+                    leftBack /= power + turn;
+                    rightFront /= power + turn;
+                    rightBack /= power + turn;
+                }
+
+                leftFrontDrive.setPower(leftFront * 0.25);
+                leftBackDrive.setPower(leftBack * 0.25);
+                rightFrontDrive.setPower(rightFront * 0.25);
+                rightBackDrive.setPower(rightBack * 0.25);
             }
 
             if (gamepad1.square) {
