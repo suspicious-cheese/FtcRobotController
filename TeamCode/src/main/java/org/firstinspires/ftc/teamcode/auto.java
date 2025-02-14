@@ -91,7 +91,7 @@ public class auto extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");  // FIXED
@@ -126,24 +126,30 @@ public class auto extends LinearOpMode {
             telemetry.addData("is-open_claw", is_open_claw);
             telemetry.addData("is-open_intake", is_open_intake);
             telemetry.addData("timer_intake", timer_intake);
-
             telemetry.update();
 
-            armpos = arm.getCurrentPosition();
+            // Start the arm movement in a separate thread
+            Thread armThread = new Thread(() -> {
+                while (true){
+                    armpos = arm.getCurrentPosition();
 
-            if (targetpos == 0) {
-                targetpos = armpos;
-            }
-            if (targetpos + 15 < armpos) {
-                arm.setPower(-0.1);
-            } else if (targetpos - 15 > armpos) {
-                arm.setPower(0.1);
-            } else {
-                arm.setPower(0);
-            }
+                    if (targetpos == 0) {
+                        targetpos = armpos;
+                    }
+                    if (targetpos + 15 < armpos) {
+                        arm.setPower(-0.1);
+                    } else if (targetpos - 15 > armpos) {
+                        arm.setPower(0.1);
+                    } else {
+                        arm.setPower(0);
+                    }
+                }
+            });
+
+            armThread.start();
 
             arm(1);
-            sleep(1000);
+            sleep(2000);
             arm(0);
             move_y(1000, 1);
             sleep(1000);
@@ -152,6 +158,10 @@ public class auto extends LinearOpMode {
             move_y(1000, -1);
             sleep(500);
             sleep(30000 - 1000 + 250 + 500 + 500);
+
+            // Make sure the arm finishes before ending the OpMode.
+            armThread.join();
+
         }
 
     }
